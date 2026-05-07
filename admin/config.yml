@@ -22,19 +22,13 @@ collections:
             name: "posts"
             widget: "list"
             label_singular: "Post"
-            summary: "Sıra {{fields.order}} - {{fields.url}}"
+            summary: "{{fields.url}}"
             fields:
               - label: "Instagram Post URL"
                 name: "url"
                 widget: "string"
-                hint: "Instagram'da postta sağ üst → '...' → 'Embed' → 'Copy Link' (örnek: https://www.instagram.com/reel/ABC123/)"
+                hint: "Instagram'da postta sağ üst → '...' → 'Bağlantıyı Kopyala' (örnek: https://www.instagram.com/reel/ABC123/). En son eklenen post sitenin galerisinde otomatik olarak en üstte gösterilir."
                 pattern: ['^https://www\.instagram\.com/(p|reel|tv)/[A-Za-z0-9_-]+', 'Geçerli bir Instagram post linki gir']
-              - label: "Sıra"
-                name: "order"
-                widget: "number"
-                default: 1
-                min: 1
-                hint: "Düşük sayılar önce gösterilir (1 = en üstte)"
 
   - name: "achievements"
     label: "🏆 Öğrenci Başarıları"
