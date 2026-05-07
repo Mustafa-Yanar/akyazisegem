@@ -1,5 +1,9 @@
 [build]
   publish = "."
+  command = ""
+
+[build.environment]
+  HUGO_VERSION = ""
 
 [[headers]]
   for = "/admin/*"
