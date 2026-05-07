@@ -5,14 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akyazı SEGEM | Yönetim Paneli</title>
     <style>
-        /* Decap CMS arayüzünü Türkçeleştir ve sadeleştir */
-
-        /* Üst bar başlığını gizle, kendi başlığımızı koy */
-        [class*="AppHeader"] [class*="AppHeaderActions"] button[title*="Quick add"] {
-            display: none !important;
+        /* Karşılama ekranı */
+        #welcome-overlay {
+            display: none;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            z-index: 9998;
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            font-family: 'Inter', -apple-system, sans-serif;
         }
 
-        /* Add post butonunu daha belirgin yap */
+        #welcome-overlay.active {
+            display: flex;
+        }
+
+        #welcome-overlay .welcome-content {
+            max-width: 700px;
+            padding: 40px;
+        }
+
+        #welcome-overlay h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+        }
+
+        #welcome-overlay h1 span {
+            color: #ef4444;
+        }
+
+        #welcome-overlay .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            margin-bottom: 40px;
+            font-weight: 500;
+        }
+
+        #welcome-overlay .nav-hint {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 24px 32px;
+            border-radius: 16px;
+            display: inline-block;
+            font-size: 1rem;
+            line-height: 1.7;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        #welcome-overlay .nav-hint strong {
+            color: #ef4444;
+        }
+
+        /* "Add post" butonu kırmızı */
         button[class*="ListControl"] {
             background: #ef4444 !important;
             color: white !important;
@@ -39,20 +90,35 @@
             line-height: 1.5 !important;
         }
 
-        /* "UNSAVED CHANGES" yazısını Türkçeleştir */
-        [class*="EditorToolbar"] [class*="StatusButton"] {
-            position: relative;
+        /* Koleksiyon liste ekranında orta paneldeki "Galeri/Başarılar" kutusunu gizle —
+           kullanıcı doğrudan düzenleme ekranına yönlendirilecek */
+        .hide-collection-content [class*="CollectionMain"] > div:nth-child(2),
+        .hide-collection-content [class*="EntryListing"] {
+            visibility: hidden;
         }
     </style>
 </head>
 <body>
+    <!-- Karşılama ekranı (sadece /admin/ kökünde gösterilir) -->
+    <div id="welcome-overlay">
+        <div class="welcome-content">
+            <h1>AKYAZI <span>SEGEM</span></h1>
+            <p class="subtitle">Yönetim Paneli</p>
+            <div class="nav-hint">
+                Sol menüden işlem yapmak istediğin bölümü seç:<br><br>
+                <strong>📸 Galeri Postları</strong> — Instagram gönderilerini ekle/sil<br>
+                <strong>🏆 Öğrenci Başarıları</strong> — Yıllık başarı sayılarını güncelle
+            </div>
+        </div>
+    </div>
+
     <!-- Netlify Identity widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <!-- Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
 
     <script>
-        // Buton metinlerini Türkçeleştir
+        // Buton/etiket metinlerini Türkçeleştir
         const translations = {
             'Publish': 'Yayınla',
             'Publish now': 'Şimdi yayınla',
@@ -85,12 +151,56 @@
             });
         }
 
-        // Sayfa yüklendiğinde ve değiştiğinde Türkçeleştir
-        const observer = new MutationObserver(translateUI);
+        // Otomatik yönlendirme ve karşılama ekranı kontrolü
+        function handleRouting() {
+            const hash = window.location.hash || '';
+            const overlay = document.getElementById('welcome-overlay');
+            const body = document.body;
+
+            // Galeri Postları collection ekranındaysa → direkt Galeri entry'sine git
+            if (hash === '#/collections/gallery') {
+                window.location.hash = '#/collections/gallery/entries/gallery';
+                return;
+            }
+
+            // Öğrenci Başarıları collection ekranındaysa → direkt Başarılar entry'sine git
+            if (hash === '#/collections/achievements') {
+                window.location.hash = '#/collections/achievements/entries/achievements';
+                return;
+            }
+
+            // Ana sayfa veya hash yok → karşılama ekranını göster
+            if (hash === '' || hash === '#/' || hash === '#/collections' || hash === '#') {
+                overlay.classList.add('active');
+                body.classList.add('hide-collection-content');
+            } else {
+                overlay.classList.remove('active');
+                body.classList.remove('hide-collection-content');
+            }
+        }
+
+        // Hash değişikliklerini dinle
+        window.addEventListener('hashchange', handleRouting);
+
+        // Sayfa yüklendiğinde DOM değişikliklerini izle
+        const observer = new MutationObserver(() => {
+            translateUI();
+            handleRouting();
+        });
+
         document.addEventListener('DOMContentLoaded', () => {
             observer.observe(document.body, { childList: true, subtree: true });
             translateUI();
+            handleRouting();
         });
+
+        // CMS hazır olduğunda da bir kez çalıştır
+        if (window.CMS) {
+            window.CMS.registerEventListener({
+                name: 'preSave',
+                handler: () => {}
+            });
+        }
     </script>
 </body>
 </html>
