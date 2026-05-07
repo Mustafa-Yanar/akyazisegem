@@ -1,6 +1,46 @@
 {
   "years": [
     {
+      "year": "2020",
+      "fen_lisesi": 0,
+      "anadolu_lisesi": 0,
+      "sosyal_bilimler_lisesi": 0,
+      "imam_hatip_lisesi": 0,
+      "meslek_lisesi": 0,
+      "toplam_yerlesme": 0,
+      "basari_orani": 0
+    },
+    {
+      "year": "2021",
+      "fen_lisesi": 0,
+      "anadolu_lisesi": 0,
+      "sosyal_bilimler_lisesi": 0,
+      "imam_hatip_lisesi": 0,
+      "meslek_lisesi": 0,
+      "toplam_yerlesme": 0,
+      "basari_orani": 0
+    },
+    {
+      "year": "2022",
+      "fen_lisesi": 0,
+      "anadolu_lisesi": 0,
+      "sosyal_bilimler_lisesi": 0,
+      "imam_hatip_lisesi": 0,
+      "meslek_lisesi": 0,
+      "toplam_yerlesme": 0,
+      "basari_orani": 0
+    },
+    {
+      "year": "2023",
+      "fen_lisesi": 0,
+      "anadolu_lisesi": 0,
+      "sosyal_bilimler_lisesi": 0,
+      "imam_hatip_lisesi": 0,
+      "meslek_lisesi": 0,
+      "toplam_yerlesme": 0,
+      "basari_orani": 0
+    },
+    {
       "year": "2024",
       "fen_lisesi": 8,
       "anadolu_lisesi": 42,
@@ -22,7 +62,7 @@
     },
     {
       "year": "2026",
-      "fen_lisesi": 16,
+      "fen_lisesi": 15,
       "anadolu_lisesi": 63,
       "sosyal_bilimler_lisesi": 22,
       "imam_hatip_lisesi": 28,
