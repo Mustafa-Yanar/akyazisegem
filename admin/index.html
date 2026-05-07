@@ -151,23 +151,11 @@
             });
         }
 
-        // Otomatik yönlendirme ve karşılama ekranı kontrolü
-        function handleRouting() {
+        // Karşılama ekranı kontrolü (sadece görsel)
+        function updateOverlay() {
             const hash = window.location.hash || '';
             const overlay = document.getElementById('welcome-overlay');
             const body = document.body;
-
-            // Galeri Postları collection ekranındaysa → direkt Galeri entry'sine git
-            if (hash === '#/collections/gallery') {
-                window.location.hash = '#/collections/gallery/entries/gallery';
-                return;
-            }
-
-            // Öğrenci Başarıları collection ekranındaysa → direkt Başarılar entry'sine git
-            if (hash === '#/collections/achievements') {
-                window.location.hash = '#/collections/achievements/entries/achievements';
-                return;
-            }
 
             // Ana sayfa veya hash yok → karşılama ekranını göster
             if (hash === '' || hash === '#/' || hash === '#/collections' || hash === '#') {
@@ -179,19 +167,46 @@
             }
         }
 
-        // Hash değişikliklerini dinle
-        window.addEventListener('hashchange', handleRouting);
+        // Sol menüdeki Galeri/Başarılar linklerine tıklamayı yakala ve direkt düzenleme ekranına yönlendir
+        function setupSidebarShortcuts() {
+            // Galeri linki
+            document.querySelectorAll('a[href="#/collections/gallery"]').forEach(link => {
+                if (link.dataset.shortcutInstalled) return;
+                link.dataset.shortcutInstalled = '1';
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.hash = '#/collections/gallery/entries/gallery';
+                });
+            });
+
+            // Başarılar linki
+            document.querySelectorAll('a[href="#/collections/achievements"]').forEach(link => {
+                if (link.dataset.shortcutInstalled) return;
+                link.dataset.shortcutInstalled = '1';
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.location.hash = '#/collections/achievements/entries/achievements';
+                });
+            });
+        }
+
+        // Hash değişikliklerini dinle (sadece overlay için)
+        window.addEventListener('hashchange', updateOverlay);
 
         // Sayfa yüklendiğinde DOM değişikliklerini izle
         const observer = new MutationObserver(() => {
             translateUI();
-            handleRouting();
+            updateOverlay();
+            setupSidebarShortcuts();
         });
 
         document.addEventListener('DOMContentLoaded', () => {
             observer.observe(document.body, { childList: true, subtree: true });
             translateUI();
-            handleRouting();
+            updateOverlay();
+            setupSidebarShortcuts();
         });
 
         // CMS hazır olduğunda da bir kez çalıştır
