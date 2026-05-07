@@ -717,6 +717,11 @@
     </footer>
 
     <script>
+        // Netlify Identity davet linkini admin sayfasına yönlendir
+        if (window.location.hash && (window.location.hash.includes('invite_token=') || window.location.hash.includes('recovery_token=') || window.location.hash.includes('confirmation_token='))) {
+            window.location.href = '/admin/' + window.location.hash;
+        }
+
         // Yıl sekmesi değişimi
         function switchYear(year, btn) {
             document.querySelectorAll('.year-content').forEach(el => el.classList.remove('active'));
