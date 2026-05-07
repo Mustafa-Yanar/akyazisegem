@@ -8,6 +8,11 @@ public_folder: "/uploads"
 
 locale: 'en'
 
+show_preview_links: false
+
+editor:
+  preview: false
+
 collections:
   - name: "gallery"
     label: "📸 Galeri Postları"
