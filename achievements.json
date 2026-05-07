@@ -1,0 +1,35 @@
+{
+  "years": [
+    {
+      "year": "2024",
+      "fen_lisesi": 8,
+      "anadolu_lisesi": 42,
+      "sosyal_bilimler_lisesi": 15,
+      "imam_hatip_lisesi": 20,
+      "meslek_lisesi": 10,
+      "toplam_yerlesme": 95,
+      "basari_orani": 92
+    },
+    {
+      "year": "2025",
+      "fen_lisesi": 12,
+      "anadolu_lisesi": 55,
+      "sosyal_bilimler_lisesi": 18,
+      "imam_hatip_lisesi": 25,
+      "meslek_lisesi": 14,
+      "toplam_yerlesme": 124,
+      "basari_orani": 94
+    },
+    {
+      "year": "2026",
+      "fen_lisesi": 15,
+      "anadolu_lisesi": 63,
+      "sosyal_bilimler_lisesi": 22,
+      "imam_hatip_lisesi": 28,
+      "meslek_lisesi": 16,
+      "toplam_yerlesme": 144,
+      "basari_orani": 95
+    }
+  ],
+  "active_year": "2026"
+}

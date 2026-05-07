@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akyazı SEGEM | Özel Öğretim Kursu</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --koyu-mavi: #1e293b;
+            --canli-kirmizi: #ef4444;
+            --acik-gri: #f8fafc;
+            --metin-koyu: #334155;
+            --beyaz: #ffffff;
+            --golge: 0 10px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.08);
+            --golge-guclu: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--metin-koyu);
+            background-color: var(--acik-gri);
+        }
+
+        /* ── NAV ── */
+        nav {
+            background: rgba(15, 23, 42, 0.96);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 0 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            height: 68px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .logo {
+            color: var(--beyaz);
+            font-size: 1.35rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+        .logo span { color: var(--canli-kirmizi); }
+
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 8px 14px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .nav-links a:hover {
+            color: var(--beyaz);
+            background: rgba(255,255,255,0.09);
+        }
+
+        /* ── HERO ── */
+        .hero {
+            height: calc(100vh - 68px);
+            min-height: 600px;
+            margin-top: 68px;
+            background:
+                linear-gradient(
+                    to bottom,
+                    rgba(15,23,42,0.35) 0%,
+                    rgba(15,23,42,0.6) 55%,
+                    rgba(15,23,42,0.92) 100%
+                ),
+                url('bina-foto-2.png') center top/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--beyaz);
+            padding: 0 24px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            padding: 9px 20px;
+            border-radius: 50px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.25);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.8rem, 9vw, 7rem);
+            font-weight: 900;
+            letter-spacing: -3px;
+            line-height: 0.95;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 8px 30px rgba(0,0,0,0.35);
+        }
+        .hero h1 span {
+            color: var(--canli-kirmizi);
+            text-shadow: 0 2px 8px rgba(239,68,68,0.4), 0 8px 30px rgba(0,0,0,0.35);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            font-weight: 600;
+            opacity: 1;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-top: 18px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.6), 0 1px 3px rgba(0,0,0,0.8);
+            color: rgba(255,255,255,0.9);
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 38px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255,255,255,0.3);
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            animation: bounce 2.2s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.3; }
+            50% { transform: translateX(-50%) translateY(7px); opacity: 0.6; }
+        }
+
+        /* ── BÖLÜM BAŞLIKLARI ── */
+        .section-label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--canli-kirmizi);
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .section-divider {
+            width: 44px;
+            height: 3px;
+            background: var(--canli-kirmizi);
+            border-radius: 2px;
+            margin: 14px auto 0;
+        }
+
+        /* ── VİDEO ── */
+        .video-section {
+            padding: 110px 5% 90px;
+            background: #0f172a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .video-section .section-label { color: #f87171; }
+
+        .video-section h2 {
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            color: var(--beyaz);
+            font-weight: 700;
+            margin-bottom: 50px;
+        }
+
+        .video-wrapper {
+            width: 96%;
+            aspect-ratio: 21 / 9;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,0.7);
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ── BAŞARILAR ── */
+        .achievements {
+            padding: 110px 5% 90px;
+            background: var(--acik-gri);
+        }
+
+        .achievements-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .achievements-header h2 {
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            color: var(--koyu-mavi);
+            font-weight: 800;
+        }
+
+        .year-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 48px;
+            flex-wrap: nowrap;
+        }
+
+        .year-tab {
+            padding: 10px 34px;
+            border-radius: 50px;
+            border: 2px solid #e2e8f0;
+            background: var(--beyaz);
+            color: var(--metin-koyu);
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 480px) {
+            .year-tab { padding: 9px 0; flex: 1; text-align: center; font-size: 0.9rem; }
+            .year-tabs { gap: 8px; padding: 0 2%; }
+        }
+        .year-tab:hover {
+            border-color: var(--canli-kirmizi);
+            color: var(--canli-kirmizi);
+            transform: translateY(-2px);
+        }
+        .year-tab.active {
+            background: var(--canli-kirmizi);
+            border-color: var(--canli-kirmizi);
+            color: var(--beyaz);
+            box-shadow: 0 8px 20px rgba(239,68,68,0.3);
+        }
+
+        .year-content { display: none; }
+        .year-content.active { display: block; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: var(--beyaz);
+            border-radius: 20px;
+            padding: 34px 22px;
+            text-align: center;
+            box-shadow: var(--golge);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0,0,0,0.04);
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--canli-kirmizi), #f97316);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--golge-guclu);
+        }
+        .stat-card:hover::after { transform: scaleX(1); }
+
+        .stat-card .number {
+            font-size: 3.2rem;
+            color: var(--canli-kirmizi);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .stat-card .school-name {
+            font-weight: 700;
+            color: var(--koyu-mavi);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .achievement-summary {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 52px;
+            padding-top: 40px;
+            border-top: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .summary-item { text-align: center; }
+        .summary-item .big-number {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--koyu-mavi);
+            line-height: 1;
+        }
+        .summary-item .big-number em {
+            color: var(--canli-kirmizi);
+            font-style: normal;
+        }
+        .summary-item p {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-top: 6px;
+        }
+
+        /* ── GALERİ ── */
+        .gallery {
+            padding: 110px 5% 90px;
+            text-align: center;
+            background: var(--beyaz);
+        }
+
+        .gallery h2 {
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            color: var(--koyu-mavi);
+            font-weight: 800;
+        }
+
+        .gallery .instagram-label {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--canli-kirmizi);
+            display: block;
+            margin-top: 14px;
+        }
+
+        .instagram-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1200px;
+            margin: 44px auto 0;
+        }
+
+        .instagram-grid .instagram-media {
+            width: 100% !important;
+            max-width: 100% !important;
+            min-width: 0 !important;
+            margin: 0 !important;
+            border-radius: 16px !important;
+            box-shadow: var(--golge) !important;
+        }
+
+        @media (max-width: 900px) {
+            .instagram-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        }
+        @media (max-width: 560px) {
+            .instagram-grid { grid-template-columns: 1fr; }
+        }
+
+        /* ── İLETİŞİM ── */
+        .contact-section {
+            padding: 110px 5% 90px;
+            background: var(--acik-gri);
+        }
+
+        .contact-section .section-header {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .contact-section h2 {
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            color: var(--koyu-mavi);
+            font-weight: 800;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 28px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-info-card {
+            background: var(--koyu-mavi);
+            padding: 50px 40px;
+            border-radius: 24px;
+            color: var(--beyaz);
+        }
+
+        .contact-info-card h3 {
+            color: var(--beyaz);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 38px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 26px;
+        }
+
+        .contact-icon {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            background: rgba(239,68,68,0.12);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .contact-icon i { color: #f87171; font-size: 1rem; }
+
+        .contact-item-text { padding-top: 2px; }
+        .contact-item-text .label {
+            font-size: 0.68rem;
+            color: rgba(255,255,255,0.35);
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .contact-item-text a,
+        .contact-item-text span {
+            color: rgba(255,255,255,0.88);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .contact-item-text a:hover { color: #f87171; }
+
+        .map-container {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--golge-guclu);
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            min-height: 460px;
+            border: none;
+            display: block;
+        }
+
+        /* ── WHATSAPP ── */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25d366;
+            color: white;
+            padding: 14px 22px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.875rem;
+            box-shadow: 0 8px 28px rgba(37,211,102,0.4);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+        .whatsapp-float:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 14px 40px rgba(37,211,102,0.5);
+        }
+        .whatsapp-float i { font-size: 1.4rem; }
+
+        /* ── FOOTER ── */
+        footer {
+            background: #0f172a;
+            color: rgba(255,255,255,0.35);
+            text-align: center;
+            padding: 40px;
+            font-size: 0.85rem;
+        }
+        footer strong { color: rgba(255,255,255,0.65); }
+
+        /* ── MOBİL ── */
+        @media (max-width: 1024px) {
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                height: auto;
+                flex-direction: column;
+                padding: 14px 5%;
+                gap: 10px;
+            }
+            .nav-links {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: nowrap;
+                gap: 2px;
+            }
+            .nav-links a { font-size: 0.75rem; padding: 6px 7px; }
+
+            .hero {
+                background-attachment: scroll;
+                background-size: cover;
+                background-position: center center;
+                height: auto;
+                min-height: unset;
+                aspect-ratio: 1 / 1;
+                margin-top: 90px;
+            }
+            .hero h1 { letter-spacing: -2px; }
+
+            .video-section { padding: 70px 5% 60px; }
+            .video-wrapper {
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                border-radius: 10px;
+            }
+
+            .achievements { padding: 70px 5%; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+            .stat-card { padding: 26px 16px; }
+            .stat-card .number { font-size: 2.4rem; }
+            .stat-card .school-name { font-size: 0.85rem; }
+            .achievement-summary { gap: 30px; margin-top: 36px; padding-top: 30px; }
+
+            .gallery { padding: 70px 5%; }
+            .instagram-placeholder { min-height: 240px; }
+
+            .contact-section { padding: 70px 5%; }
+            .contact-info-card { padding: 34px 24px; }
+
+            .whatsapp-float {
+                bottom: 20px;
+                right: 20px;
+                border-radius: 50%;
+                width: 54px;
+                height: 54px;
+                padding: 0;
+                justify-content: center;
+            }
+            .whatsapp-float .wa-text { display: none; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .achievement-summary { gap: 20px; }
+            .hero h1 { letter-spacing: -1.5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <a href="#anasayfa" class="logo">AKYAZI <span>SEGEM</span></a>
+        <div class="nav-links">
+            <a href="#anasayfa">Ana Sayfa</a>
+            <a href="#tanitim">Kurumsal</a>
+            <a href="#basarilar">Başarılar</a>
+            <a href="#galeri">Etkinlikler</a>
+            <a href="#iletisim">İletişim</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="anasayfa" class="hero">
+        <div class="hero-badge">
+            <i class="fas fa-map-marker-alt" style="font-size:0.7rem;"></i>
+            Akyazı · Sakarya
+        </div>
+        <h1>AKYAZI <span>SEGEM</span></h1>
+        <p class="hero-subtitle">Özel Öğretim Kursu</p>
+        <div class="hero-scroll">
+            <i class="fas fa-chevron-down"></i>
+            keşfet
+        </div>
+    </section>
+
+    <!-- VİDEO -->
+    <section id="tanitim" class="video-section">
+        <h2>Eğitim Anlayışımız</h2>
+        <div class="video-wrapper">
+            <video controls poster="video-kapak-resmi.jpg">
+                <source src="tanitim-videosu.mp4" type="video/mp4">
+                Tarayıcınız video oynatmayı desteklemiyor.
+            </video>
+        </div>
+    </section>
+
+    <!-- BAŞARILAR -->
+    <section id="basarilar" class="achievements">
+        <div class="achievements-header">
+            <h2>Öğrenci Başarıları</h2>
+            <div class="section-divider"></div>
+        </div>
+
+        <div class="year-tabs" id="year-tabs"></div>
+        <div id="year-contents"></div>
+    </section>
+
+    <!-- GALERİ -->
+    <section id="galeri" class="gallery">
+        <h2>Öğrenci Etkinlikleri</h2>
+        <div class="section-divider"></div>
+        <div class="instagram-grid" id="instagram-grid"></div>
+        <script async src="//www.instagram.com/embed.js"></script>
+    </section>
+
+    <!-- İLETİŞİM -->
+    <section id="iletisim" class="contact-section">
+        <div class="section-header">
+            <h2>Bize Ulaşın</h2>
+            <div class="section-divider"></div>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info-card">
+                <h3>İletişim Bilgileri</h3>
+
+                <div class="contact-item">
+                    <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="contact-item-text">
+                        <div class="label">Adres</div>
+                        <span>Konuralp Mahallesi, Ada Cd. No:310/1-2-3, 54400 Akyazı/Sakarya</span>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+                    <div class="contact-item-text">
+                        <div class="label">Telefon</div>
+                        <a href="tel:+905303617454">0530 361 74 54</a>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="contact-icon"><i class="fab fa-instagram"></i></div>
+                    <div class="contact-item-text">
+                        <div class="label">Instagram</div>
+                        <a href="https://www.instagram.com/akyazicozumsegem" target="_blank" rel="noopener">@akyazicozumsegem</a>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="map-container">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d994.8246400292486!2d30.625254897610546!3d40.6817351886432!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cccdec29dbee35%3A0x9482c2752be1319e!2zQWt5YXrEsSDDh8O2esO8bSDDlnplbCBFxJ9pdGltIEt1cnN1IC8gw5Z6ZWwgQWt5YXrEsSDDh8O2esO8bSBTb3N5YWwgRXRraW5saWsgdmUgR2VsacWfaW0gTWVya2V6aQ!5e0!3m2!1str!2str!4v1776428843584!5m2!1str!2str"
+                    allowfullscreen=""
+                    loading="lazy"
+                    referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHATSAPP -->
+    <a href="https://wa.me/905303617454" class="whatsapp-float" target="_blank" rel="noopener" aria-label="WhatsApp ile iletişim">
+        <i class="fab fa-whatsapp"></i>
+        <span class="wa-text">WhatsApp</span>
+    </a>
+
+    <footer>
+        <p>© 2026 <strong>Akyazı SEGEM</strong> Özel Öğretim Kursu. Tüm Hakları Saklıdır.</p>
+    </footer>
+
+    <script>
+        // Yıl sekmesi değişimi
+        function switchYear(year, btn) {
+            document.querySelectorAll('.year-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.year-tab').forEach(el => el.classList.remove('active'));
+            document.getElementById('year-' + year).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // Başarıları yükle
+        async function loadAchievements() {
+            try {
+                const res = await fetch('achievements.json?v=' + Date.now());
+                const data = await res.json();
+                const tabsEl = document.getElementById('year-tabs');
+                const contentsEl = document.getElementById('year-contents');
+
+                const sortedYears = [...data.years].sort((a, b) => a.year.localeCompare(b.year));
+                const activeYear = data.active_year || sortedYears[sortedYears.length - 1].year;
+
+                tabsEl.innerHTML = sortedYears.map(y =>
+                    `<button class="year-tab ${y.year === activeYear ? 'active' : ''}" onclick="switchYear('${y.year}', this)">${y.year}</button>`
+                ).join('');
+
+                contentsEl.innerHTML = sortedYears.map(y => `
+                    <div id="year-${y.year}" class="year-content ${y.year === activeYear ? 'active' : ''}">
+                        <div class="stats-grid">
+                            <div class="stat-card"><div class="number">${y.fen_lisesi}</div><div class="school-name">Fen Lisesi</div></div>
+                            <div class="stat-card"><div class="number">${y.anadolu_lisesi}</div><div class="school-name">Anadolu Lisesi</div></div>
+                            <div class="stat-card"><div class="number">${y.sosyal_bilimler_lisesi}</div><div class="school-name">Sosyal Bilimler Lisesi</div></div>
+                            <div class="stat-card"><div class="number">${y.imam_hatip_lisesi}</div><div class="school-name">İmam Hatip Lisesi</div></div>
+                            <div class="stat-card"><div class="number">${y.meslek_lisesi}</div><div class="school-name">Meslek Lisesi</div></div>
+                        </div>
+                        <div class="achievement-summary">
+                            <div class="summary-item">
+                                <div class="big-number"><em>${y.toplam_yerlesme}</em></div>
+                                <p>Toplam Yerleşme</p>
+                            </div>
+                            <div class="summary-item">
+                                <div class="big-number">%<em>${y.basari_orani}</em></div>
+                                <p>Başarı Oranı</p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (e) {
+                console.error('Başarılar yüklenemedi:', e);
+            }
+        }
+
+        // Galeriyi yükle
+        async function loadGallery() {
+            try {
+                const res = await fetch('gallery.json?v=' + Date.now());
+                const data = await res.json();
+                const gridEl = document.getElementById('instagram-grid');
+                const sortedPosts = [...data.posts].sort((a, b) => (a.order || 0) - (b.order || 0));
+
+                gridEl.innerHTML = sortedPosts.map(p => `
+                    <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="${p.url}?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14"></blockquote>
+                `).join('');
+
+                // Instagram embed scriptini yeniden çalıştır
+                if (window.instgrm && window.instgrm.Embeds) {
+                    window.instgrm.Embeds.process();
+                }
+            } catch (e) {
+                console.error('Galeri yüklenemedi:', e);
+            }
+        }
+
+        loadAchievements();
+        loadGallery();
+    </script>
+
+</body>
+</html>

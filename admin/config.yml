@@ -1,0 +1,97 @@
+backend:
+  name: git-gateway
+  branch: main
+
+publish_mode: simple
+media_folder: "uploads"
+public_folder: "/uploads"
+
+locale: 'en'
+
+collections:
+  - name: "gallery"
+    label: "📸 Galeri Postları"
+    label_singular: "Galeri Postu"
+    description: "Instagram'dan eklemek istediğin postları buradan yönetebilirsin."
+    files:
+      - file: "gallery.json"
+        label: "Galeri"
+        name: "gallery"
+        fields:
+          - label: "Instagram Postları"
+            name: "posts"
+            widget: "list"
+            label_singular: "Post"
+            summary: "Sıra {{fields.order}} - {{fields.url}}"
+            fields:
+              - label: "Instagram Post URL"
+                name: "url"
+                widget: "string"
+                hint: "Instagram'da postta sağ üst → '...' → 'Embed' → 'Copy Link' (örnek: https://www.instagram.com/reel/ABC123/)"
+                pattern: ['^https://www\.instagram\.com/(p|reel|tv)/[A-Za-z0-9_-]+', 'Geçerli bir Instagram post linki gir']
+              - label: "Sıra"
+                name: "order"
+                widget: "number"
+                default: 1
+                min: 1
+                hint: "Düşük sayılar önce gösterilir (1 = en üstte)"
+
+  - name: "achievements"
+    label: "🏆 Öğrenci Başarıları"
+    label_singular: "Yıl"
+    description: "Yıllık başarı istatistiklerini buradan güncelleyebilirsin."
+    files:
+      - file: "achievements.json"
+        label: "Başarılar"
+        name: "achievements"
+        fields:
+          - label: "Aktif Olarak Gösterilecek Yıl"
+            name: "active_year"
+            widget: "string"
+            hint: "Site açıldığında hangi yıl seçili gelsin? (Örn: 2026)"
+          - label: "Yıllar"
+            name: "years"
+            widget: "list"
+            label_singular: "Yıl"
+            summary: "{{fields.year}} - {{fields.toplam_yerlesme}} yerleşme"
+            fields:
+              - label: "Yıl"
+                name: "year"
+                widget: "string"
+                hint: "Örn: 2026"
+              - label: "Fen Lisesi"
+                name: "fen_lisesi"
+                widget: "number"
+                default: 0
+                min: 0
+              - label: "Anadolu Lisesi"
+                name: "anadolu_lisesi"
+                widget: "number"
+                default: 0
+                min: 0
+              - label: "Sosyal Bilimler Lisesi"
+                name: "sosyal_bilimler_lisesi"
+                widget: "number"
+                default: 0
+                min: 0
+              - label: "İmam Hatip Lisesi"
+                name: "imam_hatip_lisesi"
+                widget: "number"
+                default: 0
+                min: 0
+              - label: "Meslek Lisesi"
+                name: "meslek_lisesi"
+                widget: "number"
+                default: 0
+                min: 0
+              - label: "Toplam Yerleşme"
+                name: "toplam_yerlesme"
+                widget: "number"
+                default: 0
+                min: 0
+              - label: "Başarı Oranı (%)"
+                name: "basari_orani"
+                widget: "number"
+                default: 0
+                min: 0
+                max: 100
