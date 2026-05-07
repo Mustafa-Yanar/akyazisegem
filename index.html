@@ -630,8 +630,8 @@
 
     <!-- VİDEO -->
     <section id="tanitim" class="video-section">
-        <h2>Eğitim Anlayışımız</h2>
-        <div class="video-wrapper">
+        <h2 id="video-title">Eğitim Anlayışımız</h2>
+        <div class="video-wrapper" id="video-wrapper">
             <video controls poster="video-kapak-resmi.jpg">
                 <source src="tanitim-videosu.mp4" type="video/mp4">
                 Tarayıcınız video oynatmayı desteklemiyor.
@@ -672,7 +672,7 @@
                     <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
                     <div class="contact-item-text">
                         <div class="label">Adres</div>
-                        <span>Konuralp Mahallesi, Ada Cd. No:310/1-2-3, 54400 Akyazı/Sakarya</span>
+                        <span id="contact-address">Konuralp Mahallesi, Ada Cd. No:310/1-2-3, 54400 Akyazı/Sakarya</span>
                     </div>
                 </div>
 
@@ -680,7 +680,7 @@
                     <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
                     <div class="contact-item-text">
                         <div class="label">Telefon</div>
-                        <a href="tel:+905303617454">0530 361 74 54</a>
+                        <a id="contact-phone" href="tel:+905303617454">0530 361 74 54</a>
                     </div>
                 </div>
 
@@ -688,14 +688,14 @@
                     <div class="contact-icon"><i class="fab fa-instagram"></i></div>
                     <div class="contact-item-text">
                         <div class="label">Instagram</div>
-                        <a href="https://www.instagram.com/akyazicozumsegem" target="_blank" rel="noopener">@akyazicozumsegem</a>
+                        <a id="contact-instagram" href="https://www.instagram.com/akyazicozumsegem" target="_blank" rel="noopener">@akyazicozumsegem</a>
                     </div>
                 </div>
 
 
             </div>
 
-            <div class="map-container">
+            <div class="map-container" id="map-container">
                 <iframe
                     src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d994.8246400292486!2d30.625254897610546!3d40.6817351886432!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cccdec29dbee35%3A0x9482c2752be1319e!2zQWt5YXrEsSDDh8O2esO8bSDDlnplbCBFxJ9pdGltIEt1cnN1IC8gw5Z6ZWwgQWt5YXrEsSDDh8O2esO8bSBTb3N5YWwgRXRraW5saWsgdmUgR2VsacWfaW0gTWVya2V6aQ!5e0!3m2!1str!2str!4v1776428843584!5m2!1str!2str"
                     allowfullscreen=""
@@ -707,7 +707,7 @@
     </section>
 
     <!-- WHATSAPP -->
-    <a href="https://wa.me/905303617454" class="whatsapp-float" target="_blank" rel="noopener" aria-label="WhatsApp ile iletişim">
+    <a id="whatsapp-float" href="https://wa.me/905303617454" class="whatsapp-float" target="_blank" rel="noopener" aria-label="WhatsApp ile iletişim">
         <i class="fab fa-whatsapp"></i>
         <span class="wa-text">WhatsApp</span>
     </a>
@@ -792,8 +792,64 @@
             }
         }
 
+        // İletişim bilgileri ve video başlığını config.json'dan yükle
+        async function loadConfig() {
+            try {
+                const res = await fetch('config.json?v=' + Date.now());
+                if (!res.ok) return;
+                const data = await res.json();
+
+                // İletişim
+                if (data.contact) {
+                    const c = data.contact;
+                    if (c.address) {
+                        const el = document.getElementById('contact-address');
+                        if (el) el.textContent = c.address;
+                    }
+                    if (c.phone) {
+                        const el = document.getElementById('contact-phone');
+                        if (el) el.textContent = c.phone;
+                    }
+                    if (c.phone_tel) {
+                        const el = document.getElementById('contact-phone');
+                        if (el) el.href = 'tel:' + c.phone_tel;
+                    }
+                    if (c.instagram_url) {
+                        const el = document.getElementById('contact-instagram');
+                        if (el) el.href = c.instagram_url;
+                    }
+                    if (c.instagram_username) {
+                        const el = document.getElementById('contact-instagram');
+                        if (el) el.textContent = c.instagram_username;
+                    }
+                    if (c.whatsapp_url) {
+                        const el = document.getElementById('whatsapp-float');
+                        if (el) el.href = c.whatsapp_url;
+                    }
+                    if (c.map_iframe) {
+                        const mapContainer = document.getElementById('map-container');
+                        // Güvenlik: sadece Google Maps iframe'ine izin ver
+                        if (mapContainer && /^<iframe[^>]+src=["']https:\/\/www\.google\.com\/maps\/embed\?[^"']+["']/i.test(c.map_iframe.trim())) {
+                            mapContainer.innerHTML = c.map_iframe;
+                        }
+                    }
+                }
+
+                // Video başlığı
+                if (data.video) {
+                    if (data.video.title) {
+                        const el = document.getElementById('video-title');
+                        if (el) el.textContent = data.video.title;
+                    }
+                }
+            } catch (e) {
+                console.error('Yapılandırma yüklenemedi:', e);
+            }
+        }
+
         loadAchievements();
         loadGallery();
+        loadConfig();
     </script>
 
 </body>
