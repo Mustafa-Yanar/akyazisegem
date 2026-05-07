@@ -5,64 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akyazı SEGEM | Yönetim Paneli</title>
     <style>
-        /* Karşılama ekranı */
-        #welcome-overlay {
-            display: none;
-            position: fixed;
-            top: 60px;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            z-index: 9998;
-            color: white;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            font-family: 'Inter', -apple-system, sans-serif;
-        }
-
-        #welcome-overlay.active {
-            display: flex;
-        }
-
-        #welcome-overlay .welcome-content {
-            max-width: 700px;
-            padding: 40px;
-        }
-
-        #welcome-overlay h1 {
-            font-size: 3rem;
-            font-weight: 900;
-            letter-spacing: -1px;
-            margin-bottom: 16px;
-        }
-
-        #welcome-overlay h1 span {
-            color: #ef4444;
-        }
-
-        #welcome-overlay .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.7;
-            margin-bottom: 40px;
-            font-weight: 500;
-        }
-
-        #welcome-overlay .nav-hint {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 24px 32px;
-            border-radius: 16px;
-            display: inline-block;
-            font-size: 1rem;
-            line-height: 1.7;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        #welcome-overlay .nav-hint strong {
-            color: #ef4444;
-        }
-
         /* "Add post" butonu kırmızı */
         button[class*="ListControl"] {
             background: #ef4444 !important;
@@ -89,29 +31,9 @@
             color: #475569 !important;
             line-height: 1.5 !important;
         }
-
-        /* Koleksiyon liste ekranında orta paneldeki "Galeri/Başarılar" kutusunu gizle —
-           kullanıcı doğrudan düzenleme ekranına yönlendirilecek */
-        .hide-collection-content [class*="CollectionMain"] > div:nth-child(2),
-        .hide-collection-content [class*="EntryListing"] {
-            visibility: hidden;
-        }
     </style>
 </head>
 <body>
-    <!-- Karşılama ekranı (sadece /admin/ kökünde gösterilir) -->
-    <div id="welcome-overlay">
-        <div class="welcome-content">
-            <h1>AKYAZI <span>SEGEM</span></h1>
-            <p class="subtitle">Yönetim Paneli</p>
-            <div class="nav-hint">
-                Sol menüden işlem yapmak istediğin bölümü seç:<br><br>
-                <strong>📸 Galeri Postları</strong> — Instagram gönderilerini ekle/sil<br>
-                <strong>🏆 Öğrenci Başarıları</strong> — Yıllık başarı sayılarını güncelle
-            </div>
-        </div>
-    </div>
-
     <!-- Netlify Identity widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <!-- Decap CMS -->
@@ -151,71 +73,11 @@
             });
         }
 
-        // Karşılama ekranı kontrolü (sadece görsel)
-        function updateOverlay() {
-            const hash = window.location.hash || '';
-            const overlay = document.getElementById('welcome-overlay');
-            const body = document.body;
-
-            // Ana sayfa veya hash yok → karşılama ekranını göster
-            if (hash === '' || hash === '#/' || hash === '#/collections' || hash === '#') {
-                overlay.classList.add('active');
-                body.classList.add('hide-collection-content');
-            } else {
-                overlay.classList.remove('active');
-                body.classList.remove('hide-collection-content');
-            }
-        }
-
-        // Sol menüdeki Galeri/Başarılar linklerine tıklamayı yakala ve direkt düzenleme ekranına yönlendir
-        function setupSidebarShortcuts() {
-            // Galeri linki
-            document.querySelectorAll('a[href="#/collections/gallery"]').forEach(link => {
-                if (link.dataset.shortcutInstalled) return;
-                link.dataset.shortcutInstalled = '1';
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.hash = '#/collections/gallery/entries/gallery';
-                });
-            });
-
-            // Başarılar linki
-            document.querySelectorAll('a[href="#/collections/achievements"]').forEach(link => {
-                if (link.dataset.shortcutInstalled) return;
-                link.dataset.shortcutInstalled = '1';
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.location.hash = '#/collections/achievements/entries/achievements';
-                });
-            });
-        }
-
-        // Hash değişikliklerini dinle (sadece overlay için)
-        window.addEventListener('hashchange', updateOverlay);
-
-        // Sayfa yüklendiğinde DOM değişikliklerini izle
-        const observer = new MutationObserver(() => {
-            translateUI();
-            updateOverlay();
-            setupSidebarShortcuts();
-        });
-
+        const observer = new MutationObserver(translateUI);
         document.addEventListener('DOMContentLoaded', () => {
             observer.observe(document.body, { childList: true, subtree: true });
             translateUI();
-            updateOverlay();
-            setupSidebarShortcuts();
         });
-
-        // CMS hazır olduğunda da bir kez çalıştır
-        if (window.CMS) {
-            window.CMS.registerEventListener({
-                name: 'preSave',
-                handler: () => {}
-            });
-        }
     </script>
 </body>
 </html>
