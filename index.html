@@ -777,9 +777,9 @@
                 const res = await fetch('gallery.json?v=' + Date.now());
                 const data = await res.json();
                 const gridEl = document.getElementById('instagram-grid');
-                const sortedPosts = [...data.posts].sort((a, b) => (a.order || 0) - (b.order || 0));
+                const posts = [...data.posts].reverse();
 
-                gridEl.innerHTML = sortedPosts.map(p => `
+                gridEl.innerHTML = posts.map(p => `
                     <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="${p.url}?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14"></blockquote>
                 `).join('');
 
