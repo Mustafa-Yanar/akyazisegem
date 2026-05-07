@@ -7,6 +7,7 @@
     <title>Akyazı SEGEM | Yönetim Paneli</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js" defer></script>
     <style>
         :root {
             --koyu-mavi: #1e293b;
@@ -656,7 +657,7 @@
     <div class="login-card">
         <h1>AKYAZI <span>SEGEM</span></h1>
         <p class="subtitle">Yönetim Paneli</p>
-        <button class="login-btn" onclick="netlifyIdentity.open('login')">
+        <button class="login-btn" id="login-btn" onclick="openLogin()">
             <i class="fas fa-lock" style="margin-right:8px;"></i>Giriş Yap
         </button>
         <p class="info">Bu panele yalnızca davet edilmiş kullanıcılar erişebilir.</p>
@@ -736,9 +737,6 @@
     </div>
 </div>
 
-<!-- Netlify Identity widget -->
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-
 <script>
 // =====================================================================
 // AKYAZI SEGEM YÖNETİM PANELİ
@@ -761,18 +759,39 @@ const state = {
 // AUTH (Netlify Identity)
 // =====================================================================
 
-netlifyIdentity.on('init', user => {
-    if (user) onLogin(user);
-});
-netlifyIdentity.on('login', user => {
-    onLogin(user);
-    netlifyIdentity.close();
-});
-netlifyIdentity.on('logout', () => {
-    state.user = null;
-    document.body.classList.remove('logged-in');
-});
-netlifyIdentity.init();
+function openLogin() {
+    if (typeof netlifyIdentity === 'undefined') {
+        showToast('Kimlik doğrulama yükleniyor, biraz bekleyin...', 'error');
+        return;
+    }
+    netlifyIdentity.open('login');
+}
+
+function bindIdentity() {
+    if (typeof netlifyIdentity === 'undefined') {
+        // Widget henüz yüklenmedi, biraz sonra tekrar dene
+        setTimeout(bindIdentity, 200);
+        return;
+    }
+    netlifyIdentity.on('init', user => {
+        if (user) onLogin(user);
+    });
+    netlifyIdentity.on('login', user => {
+        onLogin(user);
+        netlifyIdentity.close();
+    });
+    netlifyIdentity.on('logout', () => {
+        state.user = null;
+        document.body.classList.remove('logged-in');
+    });
+    netlifyIdentity.init();
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindIdentity);
+} else {
+    bindIdentity();
+}
 
 async function onLogin(user) {
     state.user = user;
