@@ -4,11 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Akyazı SEGEM | Yönetim Paneli</title>
+    <style>
+        /* Decap CMS arayüzünü Türkçeleştir ve sadeleştir */
+
+        /* Üst bar başlığını gizle, kendi başlığımızı koy */
+        [class*="AppHeader"] [class*="AppHeaderActions"] button[title*="Quick add"] {
+            display: none !important;
+        }
+
+        /* Add post butonunu daha belirgin yap */
+        button[class*="ListControl"] {
+            background: #ef4444 !important;
+            color: white !important;
+            font-weight: 700 !important;
+            padding: 10px 20px !important;
+            border-radius: 8px !important;
+            font-size: 0.95rem !important;
+        }
+
+        button[class*="ListControl"]:hover {
+            background: #dc2626 !important;
+        }
+
+        /* Form alanlarını daha okunaklı yap */
+        input[type="text"], textarea {
+            font-size: 1rem !important;
+            padding: 12px !important;
+        }
+
+        /* Yardım metinlerini daha belirgin yap */
+        [class*="ControlHint"] {
+            font-size: 0.9rem !important;
+            color: #475569 !important;
+            line-height: 1.5 !important;
+        }
+
+        /* "UNSAVED CHANGES" yazısını Türkçeleştir */
+        [class*="EditorToolbar"] [class*="StatusButton"] {
+            position: relative;
+        }
+    </style>
 </head>
 <body>
     <!-- Netlify Identity widget -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <!-- Decap CMS -->
     <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+
+    <script>
+        // Buton metinlerini Türkçeleştir
+        const translations = {
+            'Publish': 'Yayınla',
+            'Publish now': 'Şimdi yayınla',
+            'Save': 'Kaydet',
+            'Saving...': 'Kaydediliyor...',
+            'Saved': 'Kaydedildi',
+            'Publishing...': 'Yayınlanıyor...',
+            'Published': 'Yayınlandı',
+            'Delete': 'Sil',
+            'Add post': 'Post Ekle',
+            'Add Yıl': 'Yıl Ekle',
+            'UNSAVED CHANGES': 'KAYDEDİLMEMİŞ DEĞİŞİKLİK VAR',
+            'Writing in': 'Düzenleniyor:',
+            'collection': '',
+            'Contents': 'İçerikler',
+            'Media': 'Medya',
+            'Search all': 'Ara...',
+            'Collections': 'Bölümler',
+            'Sort by': 'Sırala',
+        };
+
+        function translateUI() {
+            document.querySelectorAll('button, span, a, h1, h2, h3, label').forEach(el => {
+                if (el.children.length === 0 && el.textContent) {
+                    const trimmed = el.textContent.trim();
+                    if (translations[trimmed]) {
+                        el.textContent = el.textContent.replace(trimmed, translations[trimmed]);
+                    }
+                }
+            });
+        }
+
+        // Sayfa yüklendiğinde ve değiştiğinde Türkçeleştir
+        const observer = new MutationObserver(translateUI);
+        document.addEventListener('DOMContentLoaded', () => {
+            observer.observe(document.body, { childList: true, subtree: true });
+            translateUI();
+        });
+    </script>
 </body>
 </html>
