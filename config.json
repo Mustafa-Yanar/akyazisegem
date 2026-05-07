@@ -1,0 +1,16 @@
+{
+  "contact": {
+    "phone": "0530 361 74 54",
+    "phone_tel": "+905303617454",
+    "address": "Konuralp Mahallesi, Ada Cd. No:310/1-2-3, 54400 Akyazı/Sakarya",
+    "instagram_url": "https://www.instagram.com/akyazicozumsegem",
+    "instagram_username": "@akyazicozumsegem",
+    "whatsapp_url": "https://wa.me/905303617454",
+    "map_iframe": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d994.8246400292486!2d30.625254897610546!3d40.6817351886432!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14cccdec29dbee35%3A0x9482c2752be1319e!2zQWt5YXrEsSDDh8O2esO8bSDDlnplbCBFxJ9pdGltIEt1cnN1IC8gw5Z6ZWwgQWt5YXrEsSDDh8O2esO8bSBTb3N5YWwgRXRraW5saWsgdmUgR2VsacWfaW0gTWVya2V6aQ!5e0!3m2!1str!2str!4v1776428843584!5m2!1str!2str\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>"
+  },
+  "video": {
+    "title": "Eğitim Anlayışımız",
+    "file": "tanitim-videosu.mp4",
+    "poster": "video-kapak-resmi.jpg"
+  }
+}
