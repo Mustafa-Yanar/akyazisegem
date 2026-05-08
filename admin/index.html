@@ -7,7 +7,6 @@
     <title>Akyazı SEGEM | Yönetim Paneli</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js" defer></script>
     <style>
         :root {
             --koyu-mavi: #1e293b;
@@ -47,11 +46,6 @@
             padding: 24px; z-index: 50;
         }
 
-        /* Netlify Identity modal'ının üstte görünmesini sağla */
-        #netlify-identity-widget,
-        iframe#netlify-identity-widget {
-            z-index: 99999 !important;
-        }
 
         #login-screen .login-card {
             width: 100%; max-width: 400px;
@@ -77,6 +71,7 @@
             font-weight: 500;
         }
 
+        #login-screen #login-form { display: flex; flex-direction: column; gap: 0; }
         #login-screen .login-btn {
             width: 100%;
             background: var(--canli-kirmizi);
@@ -87,6 +82,9 @@
             border-radius: 12px;
             transition: var(--gecis);
             box-shadow: 0 4px 14px rgba(239,68,68,0.35);
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
         }
         #login-screen .login-btn:hover { background: var(--kirmizi-koyu); transform: translateY(-2px); }
         #login-screen .login-btn:active { transform: translateY(0); }
@@ -663,10 +661,14 @@
     <div class="login-card">
         <h1>AKYAZI <span>SEGEM</span></h1>
         <p class="subtitle">Yönetim Paneli</p>
-        <button class="login-btn" id="login-btn" onclick="openLogin()">
-            <i class="fas fa-lock" style="margin-right:8px;"></i>Giriş Yap
-        </button>
-        <p class="info">Bu panele yalnızca davet edilmiş kullanıcılar erişebilir.</p>
+        <form id="login-form" onsubmit="return doLogin(event)">
+            <input type="password" id="login-password" class="form-input" placeholder="Şifre"
+                   autocomplete="current-password" required style="margin-bottom:14px;text-align:center;font-size:1.05rem;" />
+            <button type="submit" class="login-btn" id="login-btn">
+                <i class="fas fa-lock" style="margin-right:8px;"></i>Giriş Yap
+            </button>
+        </form>
+        <p class="info">Bu panele yalnızca yetkili kullanıcılar erişebilir.</p>
     </div>
 </div>
 
@@ -749,11 +751,9 @@
 // Tek HTML dosyası, vanilla JS, mobil-öncelikli, Netlify Identity + Git Gateway
 // =====================================================================
 
-const REPO = { owner: 'Mustafa-Yanar', repo: 'akyazisegem', branch: 'main' };
-
 // State
 const state = {
-    user: null,
+    token: null,
     currentPage: 'home',
     data: { gallery: null, achievements: null, config: null },
     sha: { gallery: null, achievements: null, config: null },
@@ -762,101 +762,136 @@ const state = {
 };
 
 // =====================================================================
-// AUTH (Netlify Identity)
+// AUTH (Vercel API + JWT, localStorage)
 // =====================================================================
 
-function openLogin() {
-    if (typeof netlifyIdentity === 'undefined') {
-        showToast('Kimlik doğrulama yükleniyor, biraz bekleyin...', 'error');
-        return;
-    }
-    netlifyIdentity.open('login');
-}
+const TOKEN_KEY = 'akyazi_admin_token';
 
-function bindIdentity() {
-    if (typeof netlifyIdentity === 'undefined') {
-        // Widget henüz yüklenmedi, biraz sonra tekrar dene
-        setTimeout(bindIdentity, 200);
-        return;
-    }
-    netlifyIdentity.on('init', user => {
-        if (user) onLogin(user);
-    });
-    netlifyIdentity.on('login', user => {
-        onLogin(user);
-        netlifyIdentity.close();
-    });
-    netlifyIdentity.on('logout', () => {
-        state.user = null;
-        document.body.classList.remove('logged-in');
-    });
-    netlifyIdentity.init();
+// Sayfa açılırken: kayıtlı token varsa giriş yapmış say
+function tryAutoLogin() {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) return;
+    // Token'ı kullanmayı dene; geçersizse temizle
+    state.token = token;
+    document.body.classList.add('logged-in');
+    showToast('Veriler yükleniyor...', '');
+    loadAllData()
+        .then(() => navTo('home'))
+        .catch(e => {
+            // Token geçersiz veya başka hata
+            localStorage.removeItem(TOKEN_KEY);
+            state.token = null;
+            document.body.classList.remove('logged-in');
+            showToast('Oturum sona erdi, lütfen tekrar giriş yapın', 'error');
+        });
 }
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bindIdentity);
+    document.addEventListener('DOMContentLoaded', tryAutoLogin);
 } else {
-    bindIdentity();
+    tryAutoLogin();
 }
 
-async function onLogin(user) {
-    state.user = user;
-    document.body.classList.add('logged-in');
-    showToast('Veriler yükleniyor...', '');
+async function doLogin(event) {
+    event.preventDefault();
+    const passwordInput = document.getElementById('login-password');
+    const btn = document.getElementById('login-btn');
+    const password = passwordInput.value;
+
+    if (!password) return false;
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Giriş yapılıyor...';
+
     try {
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.error || 'Giriş başarısız');
+        }
+        // Token kaydet ve giriş yap
+        state.token = data.token;
+        localStorage.setItem(TOKEN_KEY, data.token);
+        document.body.classList.add('logged-in');
+        passwordInput.value = '';
+        showToast('Veriler yükleniyor...', '');
         await loadAllData();
         navTo('home');
     } catch (e) {
-        showToast('Veri yüklenemedi: ' + e.message, 'error');
+        showToast(e.message || 'Giriş yapılamadı', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-lock" style="margin-right:8px;"></i>Giriş Yap';
     }
+    return false;
 }
 
 function doLogout() {
+    const performLogout = () => {
+        localStorage.removeItem(TOKEN_KEY);
+        state.token = null;
+        state.dirty = false;
+        state.pendingDirty = {};
+        state.data = { gallery: null, achievements: null, config: null };
+        state.sha = { gallery: null, achievements: null, config: null };
+        document.body.classList.remove('logged-in');
+        updateBanner();
+        closeDrawer();
+    };
+
     if (state.dirty) {
         confirmModal(
             'Kaydedilmemiş Değişiklikler',
             'Kaydedilmemiş değişiklikleriniz var. Yine de çıkmak istiyor musunuz?',
-            (ok) => { if (ok) netlifyIdentity.logout(); }
+            (ok) => { if (ok) performLogout(); }
         );
     } else {
-        netlifyIdentity.logout();
+        performLogout();
     }
 }
 
 // =====================================================================
-// GIT GATEWAY API
+// VERCEL API (Files endpoint)
 // =====================================================================
 
 async function gitGet(path) {
-    const token = state.user.token.access_token;
-    const res = await fetch(`/.netlify/git/github/contents/${path}?ref=${REPO.branch}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+    const res = await fetch(`/api/files?path=${encodeURIComponent(path)}`, {
+        headers: { 'Authorization': `Bearer ${state.token}` }
     });
-    if (!res.ok) throw new Error(`GET ${path} hatası: ${res.status}`);
+    if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `GET ${path} hatası: ${res.status}`);
+    }
     const json = await res.json();
     const content = decodeBase64Utf8(json.content);
     return { sha: json.sha, content };
 }
 
 async function gitPut(path, contentText, sha, commitMessage) {
-    const token = state.user.token.access_token;
     const body = {
-        message: commitMessage,
+        path,
         content: encodeBase64Utf8(contentText),
-        branch: REPO.branch
+        sha: sha || undefined,
+        message: commitMessage
     };
-    if (sha) body.sha = sha;
-    const res = await fetch(`/.netlify/git/github/contents/${path}`, {
+    const res = await fetch('/api/files', {
         method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        headers: {
+            'Authorization': `Bearer ${state.token}`,
+            'Content-Type': 'application/json'
+        },
         body: JSON.stringify(body)
     });
     if (!res.ok) {
-        const err = await res.text();
-        throw new Error(`PUT ${path} hatası: ${res.status} ${err}`);
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `PUT ${path} hatası: ${res.status}`);
     }
     const json = await res.json();
-    return json.content.sha;
+    return json.sha;
 }
 
 function encodeBase64Utf8(str) {
@@ -874,7 +909,10 @@ async function loadAllData() {
     const [gallery, achievements, config] = await Promise.all([
         gitGet('gallery.json'),
         gitGet('achievements.json'),
-        gitGet('config.json').catch(() => null) // config.json olmayabilir, sorun değil
+        gitGet('config.json').catch(e => {
+            console.warn('config.json okunamadı:', e.message);
+            return null;
+        })
     ]);
     state.data.gallery = JSON.parse(gallery.content);
     state.sha.gallery = gallery.sha;
@@ -997,14 +1035,13 @@ function doNavTo(page) {
 // =====================================================================
 
 function renderHome(c) {
-    const name = state.user?.user_metadata?.full_name || state.user?.email?.split('@')[0] || '';
     c.innerHTML = `
         <div class="home-hero">
             <h1>AKYAZI <span>SEGEM</span></h1>
             <p class="tag">Yönetim Paneli</p>
         </div>
         <div class="home-welcome">
-            <h2>Hoşgeldiniz${name ? ', ' + escapeHtml(name) : ''}</h2>
+            <h2>Hoşgeldiniz</h2>
             <p>Akyazı Çözüm Segem internet sitenizin yönetim paneline hoş geldiniz. Sol üstteki menü ikonundan düzenlemek istediğiniz bölümü seçebilirsiniz.</p>
             <ul>
                 <li><i class="fab fa-instagram"></i><span>Galeri — Instagram gönderilerini yönet</span></li>
@@ -1491,8 +1528,6 @@ window.addEventListener('beforeunload', e => {
     }
 });
 
-// Davet/recovery token'ı yakalama (ana sayfadan yönlendirme için)
-// Not: index.html zaten /admin/'e yönlendiriyor, Netlify Identity widget hash'i tüketir
 </script>
 
 </body>
